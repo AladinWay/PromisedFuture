@@ -7,22 +7,22 @@
 
 import Foundation
 
-public struct Future<T> {
+public struct Future<Value> {
 
-    public typealias Completion = (Result<T>) -> Void
+    public typealias Completion = (Result<Value>) -> Void
     public typealias AsyncOperation = (@escaping Completion) -> Void
     public typealias FailureCompletion = (Error) -> Void
-    public typealias SuccessCompletion = (T) -> Void
+    public typealias SuccessCompletion = (Value) -> Void
 
     private let operation: AsyncOperation
 
-    public init(result: Result<T>) {
+    public init(result: Result<Value>) {
         self.init(operation: { completion in
             completion(result)
         })
     }
 
-    public init(value: T) {
+    public init(value: Value) {
         self.init(result: .success(value))
     }
 
@@ -32,6 +32,12 @@ public struct Future<T> {
 
     public init(operation: @escaping (@escaping Completion) -> Void) {
         self.operation = operation
+    }
+
+    public func execute(completion: @escaping Completion) {
+        self.operation() { result in
+            completion(result)
+        }
     }
 
     public func execute(onSuccess: @escaping SuccessCompletion, onFailure: FailureCompletion? = nil) {
