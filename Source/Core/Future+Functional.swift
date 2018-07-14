@@ -8,7 +8,40 @@
 import Foundation
 
 extension Future {
-    public func andThen<U>(_ f: @escaping (Value) -> Future<U>) -> Future<U> {
+    /**
+     Chain two depending futures providing a function that gets the value of this future at parameter
+     and then creates new one
+
+     ````
+     struct User {
+        id: Int
+     }
+
+     // Let's assume we need to perfom two network operations
+     // The first one to get the user id
+     // And the second one to get the user information
+     // we can use `andThen` to chain them
+
+     let userIdFuture = Future(value: 14)
+
+     func userFuture(by userId: Int) -> Future<User> {
+        return Future(value: User(id: userId))
+     }
+
+     userIdFuture.andThen(userFuture).execute { user in
+        print(user)
+     }
+
+     ````
+
+     - Parameters:
+        - f: function that will generate a new `Future` by passing the value of this Future
+        - value: the value of this Future
+
+     - Returns: New chained Future
+
+     */
+    public func andThen<U>(_ f: @escaping (_ value: Value) -> Future<U>) -> Future<U> {
         return Future<U>(operation: { completion in
             self.execute(onSuccess: { value in
                 f(value).execute(completion: completion)
@@ -18,7 +51,23 @@ extension Future {
         })
     }
 
-    public func map<T>(_ f: @escaping (Value) -> T) -> Future<T> {
+    /**
+     Creates a new Future by applying a function to the successful result of this future.
+     If this future is completed with an error then the new future will also contain this error
+
+     ````
+     let stringFuture = Future(value: "http://www.google.com")
+     let urlFuture = stringFuture.map({URL(string: $0)})
+     ````
+
+     - Parameters:
+        - f: function that will generate a new `Future` by passing the value of this Future
+        - value: the value of this Future
+
+     - Returns: New Future
+     */
+
+    public func map<T>(_ f: @escaping (_ value: Value) -> T) -> Future<T> {
         return Future<T>(operation: { completion in
             self.execute(onSuccess: { value in
                 completion(.success(f(value)))
@@ -26,27 +75,5 @@ extension Future {
                 completion(.failure(error))
             })
         })
-    }
-
-    public func flatten<Value>(_ future: Future<Future<Value>>) -> Future<Value> {
-        return Future<Value>(operation: { completion in
-            future.execute(onSuccess: { nestedFuture in
-                nestedFuture.execute(completion: completion)
-            }, onFailure: { error in
-                completion(.failure(error))
-            })
-        })
-    }
-
-    public func flatMap<T>(f: @escaping (Value) -> Future<T>) -> Future<T> {
-        return flatten(map(f))
-    }
-
-    public func concat<T>(_ that: Future<T>) -> Future<(Value, T)> {
-        return self.flatMap { thisVal -> Future<(Value, T)> in
-            return that.map { thatVal in
-                return (thisVal, thatVal)
-            }
-        }
     }
 }

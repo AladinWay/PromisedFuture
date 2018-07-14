@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:PromisedFuture.playground">
-   </FileRef>
-   <FileRef
       location = "container:PromisedFuture.xcodeproj">
    </FileRef>
 </Workspace>

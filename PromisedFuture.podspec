@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
   s.license = 'MIT'
   s.summary = 'A Swift based Future/Promises framework to help writing asynchronous code in an elegant way'
   s.homepage = 'https://github.com/AladinWay/PromisedFuture'
-  s.authors = { 'Alaeddine Me' => 'itechnodev@gmail.com' }
+  s.authors = { 'Alaeddine Messaoudi' => 'itechnodev@gmail.com' }
   s.source = { :git => 'https://github.com/AladinWay/PromisedFuture.git', :tag => s.version }
 
   s.ios.deployment_target = '10.0'
