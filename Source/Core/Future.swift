@@ -18,7 +18,7 @@ import Foundation
 
     The outcome of the `Future` will be represented as an instance of the `Result` enum. The `Future` can be executed using `execute` method
 
-    `Future` is easily composable and chainable using `andThen`, `map`, `flatMap`, `flatten` and `concat`
+    `Future` is easily composable and chainable using `andThen`, `map`
 */
 
 public struct Future<Value> {
@@ -149,7 +149,7 @@ public struct Future<Value> {
 
      ````
      let future = Future(value: 14)
-     future..execute(onSuccess: { value in
+     future.execute(onSuccess: { value in
         print(value) // it will print 14
      }, onFailure: { error in
         print(error)
