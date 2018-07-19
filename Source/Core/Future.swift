@@ -34,7 +34,7 @@ public struct Future<Value> {
 
     //MARK: - Initialization
     /**
-     Initializes a new `Future` with the provided `Result`.
+     Initialize a new `Future` with the provided `Result`.
 
      Example usage:
 
@@ -54,7 +54,7 @@ public struct Future<Value> {
     }
 
     /**
-     Initializes a new `Future` with the provided value.
+     Initialize a new `Future` with the provided value.
 
      Example usage:
 
@@ -72,7 +72,7 @@ public struct Future<Value> {
     }
 
     /**
-     Initializes a new `Future` with the provided `Error`.
+     Initialize a new `Future` with the provided `Error`.
 
      Example usage:
 
@@ -91,12 +91,12 @@ public struct Future<Value> {
     }
 
     /**
-     Initializes a new `Future` with the provided operation.
+     Initialize a new `Future` with the provided operation.
      Example usage:
 
      ````
      let future = Future(operation: { completion in
-     // Your opertation to retrive the value here
+     // Your operation to retrieve the value here
      // Then in case of success you call the completion
      // with the Result passing the value
      completion(.success("Hello"))
@@ -110,7 +110,7 @@ public struct Future<Value> {
 
      - Parameters:
         - operation: the operation that should be performed by the Future. This is usually the asynchronous operation.
-        - completion: the completion block of the operation. It has the `Result` of the operation as paramater.
+        - completion: the completion block of the operation. It has the `Result` of the operation as parameter.
 
      - Returns: A new `Future`.
      */
@@ -136,7 +136,7 @@ public struct Future<Value> {
      ````
 
      - Parameters:
-        - completion: the completion block of the operation. It has the `Result` of the operation as paramater.
+        - completion: the completion block of the operation. It has the `Result` of the operation as parameter.
      */
     public func execute(completion: @escaping Completion) {
         self.operation() { result in
@@ -157,8 +157,8 @@ public struct Future<Value> {
      ````
 
      - Parameters:
-        - onSuccess: the success completion block of the operation. It has the value of the operation as paramater.
-        - onFailure: the failure completion block of the operation. It has the error of the operation as paramater.
+        - onSuccess: the success completion block of the operation. It has the value of the operation as parameter.
+        - onFailure: the failure completion block of the operation. It has the error of the operation as parameter.
      */
     public func execute(onSuccess: @escaping SuccessCompletion, onFailure: FailureCompletion? = nil) {
         self.operation() { result in
