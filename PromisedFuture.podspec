@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   DESC
 
   s.homepage = 'https://github.com/AladinWay/PromisedFuture'
-  s.screenshots = 'http://www.itechnodev.com/img/button-loading.png'
+  s.screenshots = 'http://www.itechnodev.com/img/logo.png'
   s.license = { :type => 'MIT', :file => 'LICENSE' }
   s.authors = { 'Alaeddine Messaoudi' => 'itechnodev@gmail.com' }
   s.source = { :git => 'https://github.com/AladinWay/PromisedFuture.git', :tag => s.version }
@@ -19,5 +19,5 @@ Pod::Spec.new do |s|
   s.tvos.deployment_target = '10.0'
   s.watchos.deployment_target = '3.0'
 
-  s.source_files = 'Source/*.swift'
+  s.source_files = 'Source/*.{h,m,swift}'
 end
