@@ -11,7 +11,6 @@
 [![Platform](https://img.shields.io/cocoapods/p/PromisedFuture.svg?style=flat)](http://cocoapods.org/pods/PromisedFuture)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-<br \>
    
 ## PromisedFuture
 **PromisedFuture** is a lightweight implementation of Futures/Promises. 
