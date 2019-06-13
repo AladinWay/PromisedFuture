@@ -21,12 +21,12 @@ import Foundation
     `Future` is easily composable and chainable using `andThen`, `map`
 */
 
-public struct Future<Value> {
+public class Future<Value, Failure: Error> {
 
     //MARK: - Typealias
-    public typealias Completion = (Result<Value>) -> Void
+    public typealias Completion = (Result<Value, Failure>) -> Void
     public typealias AsyncOperation = (@escaping Completion) -> Void
-    public typealias FailureCompletion = (Error) -> Void
+    public typealias FailureCompletion = (Failure) -> Void
     public typealias SuccessCompletion = (Value) -> Void
 
     //MARK: - Properties
@@ -47,7 +47,7 @@ public struct Future<Value> {
 
      - Returns: A new `Future`.
      */
-    public init(result: Result<Value>) {
+    public convenience init(result: Result<Value, Failure>) {
         self.init(operation: { completion in
             completion(result)
         })
@@ -67,7 +67,7 @@ public struct Future<Value> {
 
      - Returns: A new `Future`.
      */
-    public init(value: Value) {
+    public convenience init(value: Value) {
         self.init(result: .success(value))
     }
 
@@ -86,7 +86,7 @@ public struct Future<Value> {
 
      - Returns: A new `Future`.
      */
-    public init(error: Error) {
+    public convenience init(error: Failure) {
         self.init(result: .failure(error))
     }
 
@@ -114,7 +114,7 @@ public struct Future<Value> {
 
      - Returns: A new `Future`.
      */
-    public init(operation: @escaping (_ completion:@escaping Completion) -> Void) {
+    public init(operation: @escaping (_ completion: @escaping Completion) -> Void) {
         self.operation = operation
     }
 
@@ -160,13 +160,14 @@ public struct Future<Value> {
         - onSuccess: the success completion block of the operation. It has the value of the operation as parameter.
         - onFailure: the failure completion block of the operation. It has the error of the operation as parameter.
      */
-    public func execute(onSuccess: @escaping SuccessCompletion, onFailure: FailureCompletion? = nil) {
+    public func execute(onSuccess: @escaping SuccessCompletion = { _ in },
+                        onFailure: @escaping FailureCompletion = { _ in }) {
         self.operation() { result in
             switch result {
             case .success(let value):
                 onSuccess(value)
             case .failure(let error):
-                onFailure?(error)
+                onFailure(error)
             }
         }
     }

@@ -41,9 +41,9 @@ extension Future {
      - Returns: New chained Future
 
      */
-    public func andThen<U>(_ f: @escaping (_ value: Value) -> Future<U>) -> Future<U> {
-        return Future<U>(operation: { completion in
-            self.execute(onSuccess: { value in
+    public func andThen<U>(_ f: @escaping (_ value: Value) -> Future<U, Failure>) -> Future<U, Failure> {
+        return Future<U, Failure>(operation: { [weak self] completion in
+            self?.execute(onSuccess: { value in
                 f(value).execute(completion: completion)
             }, onFailure: { error in
                 completion(.failure(error))
@@ -67,9 +67,9 @@ extension Future {
      - Returns: New Future
      */
 
-    public func map<T>(_ f: @escaping (_ value: Value) -> T) -> Future<T> {
-        return Future<T>(operation: { completion in
-            self.execute(onSuccess: { value in
+    public func map<T>(_ f: @escaping (_ value: Value) -> T) -> Future<T, Failure> {
+        return Future<T, Failure>(operation: { [weak self] completion in
+            self?.execute(onSuccess: { value in
                 completion(.success(f(value)))
             }, onFailure: { error in
                 completion(.failure(error))
