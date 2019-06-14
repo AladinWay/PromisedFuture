@@ -11,6 +11,7 @@ import Foundation
     `Operable` represents an object of a started async task.
 */
 public protocol Operable: class {
+    @discardableResult
     func cancel() -> Self
 }
 
