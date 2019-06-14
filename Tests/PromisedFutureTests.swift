@@ -18,11 +18,13 @@ class PromisedFutureTests: XCTestCase {
         DispatchQueue.global().asyncAfter(deadline: .now() + 1 , execute: {
             completion(.success(1))
         })
+        return nil
     }
     let futureWithFailureOperation = Future<Int, Error> { completion in
         DispatchQueue.global().asyncAfter(deadline: .now() + 1 , execute: {
             completion(.failure(NSError(domain: "FutureWithFailureOperation", code: 501, userInfo: nil)))
         })
+        return nil
     }
 
     override func setUp() {
