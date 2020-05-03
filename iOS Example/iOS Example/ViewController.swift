@@ -26,7 +26,7 @@ class ViewController: UIViewController {
         })
     }
 
-    func downloadFile(from URL: URL) -> Future<Data> {
+    func downloadFile(from URL: URL) -> Future<Data, Error> {
         return Future() { completion in
             DispatchQueue.global(qos: .background).async {
                 guard let data = try? Data(contentsOf: URL) else {
@@ -40,7 +40,7 @@ class ViewController: UIViewController {
         }
     }
 
-    func requestUserInfo(of userID: Int) -> Future<User> {
+    func requestUserInfo(of userID: Int) -> Future<User, Error> {
         if let url = URL(string: "https://picsum.photos/200/200/?random/?\(userID)") {
             return Future(value: User(avatarURL: url))
         } else {
@@ -48,11 +48,11 @@ class ViewController: UIViewController {
         }
     }
 
-    func downloadImage(URL: URL) -> Future<UIImage> {
+    func downloadImage(URL: URL) -> Future<UIImage, Error> {
         return downloadFile(from: URL).map { UIImage(data: $0)! }
     }
 
-    func loadAvatar(of userID: Int) -> Future<UIImage> {
+    func loadAvatar(of userID: Int) -> Future<UIImage, Error> {
         return requestUserInfo(of: userID)
                 .map { $0.avatarURL }
                 .andThen(downloadImage)

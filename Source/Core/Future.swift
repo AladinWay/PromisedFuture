@@ -21,12 +21,12 @@ import Foundation
     `Future` is easily composable and chainable using `andThen`, `map`
 */
 
-public struct Future<Value> {
+public struct Future<Value, Failure: Error> {
 
     //MARK: - Typealias
-    public typealias Completion = (Result<Value>) -> Void
+    public typealias Completion = (Result<Value, Failure>) -> Void
     public typealias AsyncOperation = (@escaping Completion) -> Void
-    public typealias FailureCompletion = (Error) -> Void
+    public typealias FailureCompletion = (Failure) -> Void
     public typealias SuccessCompletion = (Value) -> Void
 
     //MARK: - Properties
@@ -47,7 +47,7 @@ public struct Future<Value> {
 
      - Returns: A new `Future`.
      */
-    public init(result: Result<Value>) {
+    public init(result: Result<Value, Failure>) {
         self.init(operation: { completion in
             completion(result)
         })
@@ -86,7 +86,7 @@ public struct Future<Value> {
 
      - Returns: A new `Future`.
      */
-    public init(error: Error) {
+    public init(error: Failure) {
         self.init(result: .failure(error))
     }
 
