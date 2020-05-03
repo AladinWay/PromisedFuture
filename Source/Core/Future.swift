@@ -8,14 +8,6 @@
 import Foundation
 
 /**
-    `Operable` represents an object of a started async task.
-*/
-public protocol Operable: class {
-    @discardableResult
-    func cancel() -> Self
-}
-
-/**
     A `Future` helps us to encapsulate a deferred computation, it's a way to represent a value that will exist (or will fail with an error) at some
     point in the future. It's a placeholder for values that are currently unknown due to waiting for the network, long and complex computations,
     or anything else that does not immediately resolve.
@@ -29,12 +21,12 @@ public protocol Operable: class {
     `Future` is easily composable and chainable using `andThen`, `map`
 */
 
-public class Future<Value, Failure: Error> {
+public struct Future<Value> {
 
     //MARK: - Typealias
-    public typealias Completion = (Result<Value, Failure>) -> Void
-    public typealias AsyncOperation = (@escaping Completion) -> Operable?
-    public typealias FailureCompletion = (Failure) -> Void
+    public typealias Completion = (Result<Value>) -> Void
+    public typealias AsyncOperation = (@escaping Completion) -> Void
+    public typealias FailureCompletion = (Error) -> Void
     public typealias SuccessCompletion = (Value) -> Void
 
     //MARK: - Properties
@@ -55,10 +47,9 @@ public class Future<Value, Failure: Error> {
 
      - Returns: A new `Future`.
      */
-    public convenience init(result: Result<Value, Failure>) {
+    public init(result: Result<Value>) {
         self.init(operation: { completion in
             completion(result)
-            return nil
         })
     }
 
@@ -76,7 +67,7 @@ public class Future<Value, Failure: Error> {
 
      - Returns: A new `Future`.
      */
-    public convenience init(value: Value) {
+    public init(value: Value) {
         self.init(result: .success(value))
     }
 
@@ -95,7 +86,7 @@ public class Future<Value, Failure: Error> {
 
      - Returns: A new `Future`.
      */
-    public convenience init(error: Failure) {
+    public init(error: Error) {
         self.init(result: .failure(error))
     }
 
@@ -123,10 +114,10 @@ public class Future<Value, Failure: Error> {
 
      - Returns: A new `Future`.
      */
-    public init(operation: @escaping (_ completion: @escaping Completion) -> Operable?) {
+    public init(operation: @escaping (_ completion:@escaping Completion) -> Void) {
         self.operation = operation
     }
-    
+
     //MARK: - Actions
     /**
      Execute the operation.
@@ -147,9 +138,8 @@ public class Future<Value, Failure: Error> {
      - Parameters:
         - completion: the completion block of the operation. It has the `Result` of the operation as parameter.
      */
-    @discardableResult
-    public func execute(completion: @escaping Completion) -> Operable? {
-        return self.operation() { result in
+    public func execute(completion: @escaping Completion) {
+        self.operation() { result in
             completion(result)
         }
     }
@@ -170,15 +160,13 @@ public class Future<Value, Failure: Error> {
         - onSuccess: the success completion block of the operation. It has the value of the operation as parameter.
         - onFailure: the failure completion block of the operation. It has the error of the operation as parameter.
      */
-    @discardableResult
-    public func execute(onSuccess: @escaping SuccessCompletion = { _ in },
-                        onFailure: @escaping FailureCompletion = { _ in }) -> Operable? {
-        return self.operation() { result in
+    public func execute(onSuccess: @escaping SuccessCompletion, onFailure: FailureCompletion? = nil) {
+        self.operation() { result in
             switch result {
             case .success(let value):
                 onSuccess(value)
             case .failure(let error):
-                onFailure(error)
+                onFailure?(error)
             }
         }
     }

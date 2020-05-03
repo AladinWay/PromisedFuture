@@ -9,22 +9,20 @@ import XCTest
 @testable import PromisedFuture
 
 class PromisedFutureTests: XCTestCase {
-    
-    let futureWithValue = Future<Int, Error>(value: 1)
-    let futureWithError = Future<Int, Error>(error: NSError(domain: "futureWithError", code: 500, userInfo: nil))
-    let futureWithResultValue = Future<Int, Error>(result: Result.success(1))
-    let futureWithResultError = Future<Int, Error>(result: Result.failure(NSError(domain: "futureWithError", code: 500, userInfo: nil)))
-    let futureWithSuccessOperation = Future<Int, Error> { completion in
+
+    let futureWithValue = Future(value: 1)
+    let futureWithError = Future<Int>(error: NSError(domain: "futureWithError", code: 500, userInfo: nil))
+    let futureWithResultValue = Future(result: Result.success(1))
+    let futureWithResultError = Future<Int>(result: Result.failure(NSError(domain: "futureWithError", code: 500, userInfo: nil)))
+    let futureWithSuccessOperation = Future { completion in
         DispatchQueue.global().asyncAfter(deadline: .now() + 1 , execute: {
             completion(.success(1))
         })
-        return nil
     }
-    let futureWithFailureOperation = Future<Int, Error> { completion in
+    let futureWithFailureOperation = Future<Int> { completion in
         DispatchQueue.global().asyncAfter(deadline: .now() + 1 , execute: {
             completion(.failure(NSError(domain: "FutureWithFailureOperation", code: 501, userInfo: nil)))
         })
-        return nil
     }
 
     override func setUp() {
